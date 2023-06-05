@@ -1,0 +1,38 @@
+<h1>Chatroom</h1>
+
+<p>Username: {{ username }}</p>
+<p>PIN: {{ pin }}</p>
+
+<ul id="messages">
+    {% for message in messages %}
+        <li><strong>{{ message.username }} ({{ message.timestamp }}):</strong> {{ message.text }}</li>
+    {% endfor %}
+</ul>
+
+<form action="" method="post" id="send-message">
+    <input type="text" name="message" id="message" placeholder="Nachricht eingeben..." required>
+    <input type="submit" value="Senden">
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
+
+<script>
+var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+socket.on('connect', function() {
+    $('#send-message').on('submit', function(e) {
+        e.preventDefault();
+
+        var messageText = $('#message').val();
+
+        socket.emit('message', { pin: "{{ pin }}", username: "{{ username }}", message: messageText });
+
+        $('#message').val('');
+    });
+});
+
+socket.on('message', function(data) {
+    $('#messages').append('<li><strong>' + data.username + ' (' + data.timestamp + '):</strong> ' + data.text + '</li>');
+});
+</script>
