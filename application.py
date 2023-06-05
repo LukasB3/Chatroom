@@ -5,7 +5,8 @@ from flask_socketio import SocketIO, send
 from datetime import datetime
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, engineio_logger=True, logger=True)
+
 
 app.config["MONGO_URI"] = "mongodb+srv://Test:WeatherUlm@weathercluster.zhdkvmz.mongodb.net/?retryWrites=true&w=majority"
 
