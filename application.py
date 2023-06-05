@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request
 from flask_pymongo import PyMongo
-from flask import jsonify
 from flask_socketio import SocketIO, send
 from datetime import datetime
+from pytz import timezone
+import pytz
 
 app = Flask(__name__)
 socketio = SocketIO(app, engineio_logger=True, logger=True)
@@ -26,7 +27,8 @@ def handle_message(data):
     chatroom = chatrooms.find_one({'pin': pin})
 
     if chatroom is not None:
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        berlin = timezone('Europe/Berlin')
+        timestamp = datetime.now().astimezone(berlin).strftime('%Y-%m-%d %H:%M:%S')
         new_message = {'username': username, 'text': message, 'timestamp': timestamp}
         chatrooms.update_one({'pin': pin}, {'$push': {'messages': new_message}})
 
